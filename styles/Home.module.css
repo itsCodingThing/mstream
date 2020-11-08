@@ -1,0 +1,9 @@
+.header {
+  width: 100%;
+  color: blue;
+}
+
+.listContainer {
+  height: 60%;
+  margin-top: 2rem;
+}
