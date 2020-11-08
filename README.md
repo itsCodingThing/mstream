@@ -1,2 +1,2 @@
 # mstream
-A audio streaming app
+A audio streaming app using nextjs
