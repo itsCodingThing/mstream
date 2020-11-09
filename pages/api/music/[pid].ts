@@ -16,16 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (typeof songName === "string") {
       const uploadStream = gfs.openUploadStream(songName);
-      const uploadToDb = req.pipe(uploadStream);
+      req.pipe(uploadStream);
 
-      uploadStream.on("close", () => {
-        res.json({ ok: true });
+      uploadStream.on("error", (err) => {
+        console.log(err);
+        res.json({ ok: false, error: "Something went wrong in uploading song to database!!!" });
       });
 
-      uploadToDb.on("close", () => {});
-
-      uploadToDb.on("finish", () => {
+      uploadStream.on("close", () => {
         console.log(`upload of ${songName} is complete`);
+        res.json({ ok: true });
       });
     }
   }
