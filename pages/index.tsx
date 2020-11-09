@@ -1,33 +1,61 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
-import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
+import fetch from "unfetch";
 
 import homeStyles from "../styles/Home.module.css";
-import { connectToDb } from "../database/db";
 import Header from "../components/Header";
 
-export const getStaticProps: GetStaticProps = async () => {
-  const { gfs } = await connectToDb();
-  const docs = await gfs.find().toArray();
+interface Song {
+  filename: string;
+  length: number;
+  _id: string;
+  chunkSize?: string;
+  uploadDate: Date;
+}
 
-  return {
-    props: {
-      data: JSON.parse(JSON.stringify(docs)),
-    },
-  };
-};
+interface PlayListProps {
+  list: Song[];
+  onClickListItem: (id: string) => void;
+  activeBtn: string;
+}
 
-export default function Root({ data }) {
-  const [btnId, setBtnId] = useState("0");
+function PlayList({ list, onClickListItem, activeBtn }: PlayListProps) {
+  if (list.length) {
+    return (
+      <ListGroup>
+        {list.map(({ _id, filename }) => (
+          <ListGroupItem tag="button" action key={_id} onClick={() => onClickListItem(_id)} active={activeBtn === _id}>
+            {filename}
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+    );
+  } else {
+    return <h2>No Songs Available</h2>;
+  }
+}
+
+export default function Root() {
+  const [response, updateResult] = useState({ load: true, list: [], error: false });
+  const [activeBtn, setActiveBtn] = useState("0");
   const router = useRouter();
 
   useEffect(() => {
-    console.log(data);
-  });
+    fetch("/api/music/")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        updateResult({ load: false, list: data, error: false });
+      })
+      .catch((err) => {
+        console.log(err);
+        updateResult({ load: false, list: [], error: true });
+      });
+  }, []);
 
   const onClickListItem = (id: string) => {
-    setBtnId(id);
+    setActiveBtn(id);
     router.push(`/${id}`);
   };
 
@@ -49,22 +77,10 @@ export default function Root({ data }) {
             Upload
           </Button>
           <div className={homeStyles.listContainer}>
-            {data.length ? (
-              <ListGroup>
-                {data.map(({ _id, filename }) => (
-                  <ListGroupItem
-                    tag="button"
-                    action
-                    key={_id}
-                    onClick={() => onClickListItem(_id)}
-                    active={btnId === _id}
-                  >
-                    {filename}
-                  </ListGroupItem>
-                ))}
-              </ListGroup>
+            {response.load ? (
+              <h1>Wait Loading List</h1>
             ) : (
-              <h1>upload new songs</h1>
+              <PlayList list={response.list} onClickListItem={onClickListItem} activeBtn={activeBtn} />
             )}
           </div>
         </Col>

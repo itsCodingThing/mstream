@@ -1,6 +1,7 @@
 .header {
   width: 100%;
   color: blue;
+  cursor: pointer;
 }
 
 .listContainer {

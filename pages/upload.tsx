@@ -8,7 +8,7 @@ export default function Upload() {
     inputEle.type = "file";
     inputEle.addEventListener(
       "change",
-      async () => {
+      () => {
         const file = inputEle.files[0];
 
         const xhr = new XMLHttpRequest();
@@ -22,7 +22,6 @@ export default function Upload() {
           if (xhr.status === 200) {
             console.log("successful");
           } else {
-            console.log(e);
             console.log("problem");
           }
         };
@@ -31,7 +30,7 @@ export default function Upload() {
           console.log(e);
         };
 
-        xhr.open("POST", `/api/music/${file.name}`);
+        xhr.open("POST", `/api/music/upload/${file.name}`);
         xhr.send(file);
       },
       { once: true },

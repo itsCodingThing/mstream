@@ -20,7 +20,8 @@
     "node-fetch": "^2.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "reactstrap": "^8.6.0"
+    "reactstrap": "^8.6.0",
+    "unfetch": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.0",

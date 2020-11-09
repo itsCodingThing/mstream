@@ -15,7 +15,7 @@ export default function SongPage() {
       </Row>
       <Row>
         <Col>
-          <audio src={`/api/music/${songID}`} controls></audio>
+          <audio src={`/api/music/stream/${songID}`} controls></audio>
         </Col>
       </Row>
     </Container>
