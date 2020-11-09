@@ -8,7 +8,7 @@ export default function Upload() {
     inputEle.type = "file";
     inputEle.addEventListener(
       "change",
-      async (e) => {
+      async () => {
         const file = inputEle.files[0];
 
         const xhr = new XMLHttpRequest();
@@ -18,10 +18,11 @@ export default function Upload() {
           console.log(completed);
         };
 
-        xhr.onloadend = () => {
+        xhr.onloadend = (e) => {
           if (xhr.status === 200) {
             console.log("successful");
           } else {
+            console.log(e);
             console.log("problem");
           }
         };
