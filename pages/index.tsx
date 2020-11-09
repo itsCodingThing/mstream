@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 import homeStyles from "../styles/Home.module.css";
 import { connectToDb } from "../database/db";
+import Header from "../components/Header";
 
 export const getStaticProps: GetStaticProps = async () => {
   const { gfs } = await connectToDb();
@@ -21,13 +22,17 @@ export default function Root({ data }) {
   const [btnId, setBtnId] = useState("0");
   const router = useRouter();
 
+  useEffect(() => {
+    console.log(data);
+  });
+
   const onClickListItem = (id: string) => {
     setBtnId(id);
     router.push(`/${id}`);
   };
 
-  const onClickUploadBtn = (e) => {
-    e.preventDefault();
+  const onClickUploadBtn = (event: SyntheticEvent) => {
+    event.preventDefault();
     router.push("/upload");
   };
 
@@ -35,7 +40,7 @@ export default function Root({ data }) {
     <Container>
       <Row className="mb-3 text-center">
         <Col>
-          <span className={`${homeStyles.header} display-4`}>mstream</span>
+          <Header />
         </Col>
       </Row>
       <Row>
