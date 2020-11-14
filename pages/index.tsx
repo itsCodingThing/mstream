@@ -42,14 +42,17 @@ export default function Root() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/music/")
+    fetch(`https://mstream-node.herokuapp.com/`, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        updateResult({ load: false, list: data, error: false });
+      .then((res) => {
+        console.log(res);
+        updateResult({ load: false, list: res.response, error: false });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         updateResult({ load: false, list: [], error: true });
       });
   }, []);

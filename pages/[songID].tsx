@@ -15,7 +15,7 @@ export default function SongPage() {
       </Row>
       <Row>
         <Col>
-          <audio src={`/api/music/stream/${songID}`} controls></audio>
+          <audio src={`https://mstream-node.herokuapp.com/stream/${songID}`} controls></audio>
         </Col>
       </Row>
     </Container>

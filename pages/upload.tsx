@@ -30,7 +30,7 @@ export default function Upload() {
           console.log(e);
         };
 
-        xhr.open("POST", `/api/music/upload/${file.name}`);
+        xhr.open("POST", `https://mstream-node.herokuapp.com/upload/${file.name}`);
         xhr.send(file);
       },
       { once: true },
