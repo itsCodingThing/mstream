@@ -50,7 +50,11 @@ export default function Root() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        updateResult({ load: false, list: res.response, error: false });
+        if (res.ok) {
+          updateResult({ load: false, list: res.response, error: false });
+        } else {
+          updateResult({ load: false, list: response.list, error: false });
+        }
       })
       .catch(() => {
         updateResult({ load: false, list: [], error: true });
