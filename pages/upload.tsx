@@ -38,11 +38,21 @@ function Upload() {
   const [modalState, setModalState] = useState({ isOpen: false });
   const [persentage, setPersentage] = useState(0);
 
+  async function openFile(): Promise<File> {
+    return new Promise((resolve) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.addEventListener("change", () => {
+        resolve(input.files[0]);
+      });
+      input.click();
+    });
+  }
+
   const onClickSelect = async () => {
     try {
-      // @ts-ignore
-      const [fileHandle] = await window.showOpenFilePicker();
-      const file = await fileHandle.getFile();
+      const file = await openFile();
+      console.log(file);
 
       setFileSelectorState({
         isFileSelected: true,
