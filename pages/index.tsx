@@ -42,6 +42,8 @@ export default function Root() {
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
+
     fetch(`https://mstream-node.herokuapp.com/`, {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -49,16 +51,19 @@ export default function Root() {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         if (res.ok) {
-          updateResult({ load: false, list: res.response, error: false });
+          isMounted && updateResult({ load: false, list: res.response, error: false });
         } else {
-          updateResult({ load: false, list: response.list, error: false });
+          isMounted && updateResult({ load: false, list: response.list, error: false });
         }
       })
       .catch(() => {
-        updateResult({ load: false, list: [], error: true });
+        isMounted && updateResult({ load: false, list: [], error: true });
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const onClickListItem = (id: string) => {

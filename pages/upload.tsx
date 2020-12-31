@@ -29,7 +29,7 @@ interface FileSelectorState {
   blob?: Blob;
 }
 
-export default function Upload() {
+function Upload() {
   const fileSelectorInitialState: FileSelectorState = {
     isFileSelected: false,
   };
@@ -73,7 +73,6 @@ export default function Upload() {
 
     xhr.upload.onprogress = (e) => {
       const completed = Math.floor((e.loaded / e.total) * 100);
-      console.log(completed);
       setPersentage(completed);
     };
 
@@ -137,3 +136,5 @@ export default function Upload() {
     </Container>
   );
 }
+
+export default Upload;
