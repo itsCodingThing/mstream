@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { Button, Col, Container, Row } from "reactstrap";
 import Header from "../components/Header";
 
@@ -8,7 +9,11 @@ import musicStyles from "../styles/Music.module.css";
 
 export default function SongPage() {
   const router = useRouter();
-  const songID = router.query.songId;
+  const songID = router.query.songID;
+
+  useEffect(() => {
+    console.log(`song id ${songID}`);
+  });
 
   return (
     <Container>
