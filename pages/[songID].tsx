@@ -44,9 +44,6 @@ export default function SongPage() {
             <Button className="mt-3" color="primary" onClick={onClickPlay}>
               Play
             </Button>
-            {/* <audio className={musicStyles.audio} controls>
-              <source src={`http://localhost:3000/stream/${songID}`} />
-            </audio> */}
           </div>
         </Col>
       </Row>

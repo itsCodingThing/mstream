@@ -15,8 +15,8 @@ import {
   Spinner,
 } from "reactstrap";
 import Header from "../components/Header";
-
 import musicStyles from "../styles/Music.module.css";
+import { url } from "../utils/url";
 
 interface FileDetails {
   name: string;
@@ -86,7 +86,7 @@ function Upload() {
       setPersentage(completed);
     };
 
-    xhr.open("POST", `https://mstream-node.herokuapp.com/upload/${fileSelectorState.fileDetails.name}`);
+    xhr.open("POST", `${url}/upload/${fileSelectorState.fileDetails.name}`);
     xhr.send(fileSelectorState.blob);
     setModalState({ isOpen: true });
   };

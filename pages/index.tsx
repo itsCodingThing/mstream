@@ -2,7 +2,6 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { useRouter } from "next/router";
 import fetch from "unfetch";
-
 import homeStyles from "../styles/Home.module.css";
 import Header from "../components/Header";
 import { url } from "../utils/url";
