@@ -5,6 +5,7 @@ import fetch from "unfetch";
 
 import homeStyles from "../styles/Home.module.css";
 import Header from "../components/Header";
+import { url } from "../utils/url";
 
 interface Song {
   filename: string;
@@ -44,7 +45,7 @@ export default function Root() {
   useEffect(() => {
     let isMounted = true;
 
-    fetch(`https://mstream-node.herokuapp.com/`, {
+    fetch(url, {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
