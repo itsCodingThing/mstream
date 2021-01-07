@@ -1,52 +1,58 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { Button, Col, Container, Row } from "reactstrap";
-import Header from "../components/Header";
-import { Howl, Howler } from "howler";
-import musicStyles from "../styles/Music.module.css";
-import { url } from "../utils/url";
+import { Howl } from "howler";
 
-export default function SongPage() {
-  const router = useRouter();
-  const { songID } = router.query;
-  const sound = new Howl({
-    src: `${url}/stream/${songID}`,
-    format: ["mp3"],
-  });
+import Header from "@/components/Header";
+import NavigationBar from "@/components/NavigationBar";
+import Page from "@/components/Page";
 
-  useEffect(() => {
-    return () => {
-      sound.unload();
+import musicStyles from "@/styles/Music.module.css";
+
+import { url } from "@/utils/url";
+
+function SongPage() {
+    const router = useRouter();
+    const { songID } = router.query;
+    const sound = new Howl({
+        src: `${url}/stream/${songID}`,
+        format: ["mp3"],
+    });
+
+    useEffect(() => {
+        return () => {
+            sound.unload();
+        };
+    });
+
+    const onClickPlay = () => {
+        console.log("play button is clicked");
+        sound.play();
     };
-  });
 
-  const onClickPlay = () => {
-    console.log("play button is clicked");
-    sound.play();
-  };
-
-  return (
-    <Container>
-      <Row className="mb-3 text-center">
-        <Col>
-          <Header />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Link href="/">
-            <Button color="primary">Back</Button>
-          </Link>
-          <div className={musicStyles.container}>
-            <Image src="/Music-thumbnail.svg" alt="thumbnail" width="200" height="200" />
-            <Button className="mt-3" color="primary" onClick={onClickPlay}>
-              Play
-            </Button>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  );
+    return (
+        <Page>
+            <NavigationBar />
+            <Container>
+                <Row className="mb-3 text-center">
+                    <Col>
+                        <Header />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <div className={musicStyles.container}>
+                            <Image src="/music-headphone.svg" alt="thumbnail" width={150} height={150} />
+                            <Button className="mt-3" color="primary" onClick={onClickPlay}>
+                                Play
+                            </Button>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+        </Page>
+    );
 }
+
+export default SongPage;
