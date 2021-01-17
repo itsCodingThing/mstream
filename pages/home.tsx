@@ -1,43 +1,53 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import { gql, useQuery } from "@apollo/client";
 import { Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
-import fetch from "unfetch";
 
-import Header from "@/components/Header";
 import NavigationBar from "@/components/NavigationBar";
 import Page from "@/components/Page";
 
-import homeStyles from "@/styles/Home.module.css";
+import styled from "styled-components";
+import { IAudioResponse } from "@/utils/interfaces";
 
-import { url } from "@/utils/url";
+function PlayList() {
+    const LIST_OF_SONGS = gql`
+        query {
+            songsList {
+                title
+                id
+                audioBlobID
+            }
+        }
+    `;
+    const [activeBtn, setActiveBtn] = useState("");
+    const router = useRouter();
+    const onClickListItem = (id: string) => {
+        setActiveBtn(id);
+        router.push(`/${id}`);
+    };
 
-interface Song {
-    filename: string;
-    length: number;
-    _id: string;
-    chunkSize?: string;
-    uploadDate: Date;
-}
+    const { loading, data, error } = useQuery<IAudioResponse>(LIST_OF_SONGS);
 
-interface PlayListProps {
-    list: Song[];
-    onClickListItem: (id: string) => void;
-    activeBtn: string;
-}
+    if (loading) {
+        return <h2>Wait Loading List</h2>;
+    }
 
-function PlayList({ list, onClickListItem, activeBtn }: PlayListProps) {
-    if (list.length) {
+    if (error) {
+        return <h2>Some Error Loading Please Refresh</h2>;
+    }
+
+    if (data && data.songsList.length) {
         return (
             <ListGroup>
-                {list.map(({ _id, filename }) => (
+                {data.songsList.map(({ id, title, audioBlobID }) => (
                     <ListGroupItem
                         tag="button"
                         action
-                        key={_id}
-                        onClick={() => onClickListItem(_id)}
-                        active={activeBtn === _id}
+                        key={id}
+                        onClick={() => onClickListItem(audioBlobID)}
+                        active={activeBtn === id}
                     >
-                        {filename}
+                        {title}
                     </ListGroupItem>
                 ))}
             </ListGroup>
@@ -47,63 +57,21 @@ function PlayList({ list, onClickListItem, activeBtn }: PlayListProps) {
     }
 }
 
+const ListContainer = styled.div`
+    height: 60%;
+    margin-top: 2rem;
+`;
+
 function Home() {
-    const [response, updateResult] = useState({ load: true, list: [], error: false });
-    const [activeBtn, setActiveBtn] = useState("0");
-    const router = useRouter();
-
-    useEffect(() => {
-        let isMounted = true;
-
-        fetch(url, {
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-            },
-        })
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.ok) {
-                    isMounted && updateResult({ load: false, list: res.response, error: false });
-                } else {
-                    isMounted && updateResult({ load: false, list: response.list, error: false });
-                }
-            })
-            .catch(() => {
-                isMounted && updateResult({ load: false, list: [], error: true });
-            });
-
-        return () => {
-            isMounted = false;
-        };
-    }, []);
-
-    const onClickListItem = (id: string) => {
-        setActiveBtn(id);
-        router.push(`/${id}`);
-    };
-
     return (
         <Page>
             <NavigationBar />
             <Container>
-                <Row className="mb-3 text-center">
-                    <Col>
-                        <Header />
-                    </Col>
-                </Row>
                 <Row>
                     <Col>
-                        <div className={homeStyles.listContainer}>
-                            {response.load ? (
-                                <h1>Wait Loading List</h1>
-                            ) : (
-                                <PlayList
-                                    list={response.list}
-                                    onClickListItem={onClickListItem}
-                                    activeBtn={activeBtn}
-                                />
-                            )}
-                        </div>
+                        <ListContainer>
+                            <PlayList />
+                        </ListContainer>
                     </Col>
                 </Row>
             </Container>

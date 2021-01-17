@@ -13,8 +13,15 @@ import {
     Button,
     Input,
 } from "reactstrap";
+import styled from "styled-components";
 
-import navigationBarStyles from "@/styles/NavigationBar.module.css";
+const InputGroupCotainer = styled.div`
+    margin-left: auto;
+`;
+
+const RouterLink = styled(NavLink)`
+    cursor: pointer;
+`;
 
 function NavigationBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,28 +30,28 @@ function NavigationBar() {
     return (
         <Navbar color="light" light expand="md">
             <NavbarBrand>mstream</NavbarBrand>
+            <Nav className="mr-3">
+                <NavItem>
+                    <Link href="/">
+                        <RouterLink>Home</RouterLink>
+                    </Link>
+                </NavItem>
+                <NavItem>
+                    <Link href="/upload">
+                        <RouterLink>Upload</RouterLink>
+                    </Link>
+                </NavItem>
+            </Nav>
             <NavbarToggler onClick={toggle} />
             <Collapse isOpen={isOpen} navbar>
-                <Nav className="mr-3 text-center" navbar>
-                    <NavItem>
-                        <Link href="/">
-                            <NavLink className={navigationBarStyles.routeLink}>Home</NavLink>
-                        </Link>
-                    </NavItem>
-                    <NavItem>
-                        <Link href="/upload">
-                            <NavLink className={navigationBarStyles.routeLink}>Upload</NavLink>
-                        </Link>
-                    </NavItem>
-                </Nav>
-                <div className={navigationBarStyles.inputGroupContainer}>
+                <InputGroupCotainer>
                     <InputGroup>
                         <Input />
                         <InputGroupAddon addonType="append">
                             <Button color="primary">Search</Button>
                         </InputGroupAddon>
                     </InputGroup>
-                </div>
+                </InputGroupCotainer>
             </Collapse>
         </Navbar>
     );

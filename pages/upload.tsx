@@ -17,12 +17,9 @@ import {
 
 import NavigationBar from "@/components/NavigationBar";
 import Page from "@/components/Page";
-import Header from "@/components/Header";
-
-import uploadStyles from "@/styles/Upload.module.css";
-import musicStyles from "@/styles/Music.module.css";
 
 import { url } from "@/utils/url";
+import styled from "styled-components";
 
 interface FileDetails {
     name: string;
@@ -34,6 +31,24 @@ interface FileSelectorState {
     fileDetails?: FileDetails;
     blob?: Blob;
 }
+
+const SelectImg = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+`;
+
+const UploadText = styled.span`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+`;
+
+const UploadBox = styled.div`
+    padding: 1rem;
+    background-color: white;
+`;
 
 function Upload() {
     const fileSelectorInitialState: FileSelectorState = {
@@ -48,9 +63,16 @@ function Upload() {
         return new Promise((resolve) => {
             const input = document.createElement("input");
             input.type = "file";
-            input.addEventListener("change", () => {
-                resolve(input.files[0]);
-            });
+            input.accept = "audio/mp3";
+            input.addEventListener(
+                "change",
+                () => {
+                    if (input.files != null) {
+                        resolve(input.files[0]);
+                    }
+                },
+                true
+            );
             input.click();
         });
     }
@@ -58,8 +80,6 @@ function Upload() {
     const onClickSelect = async () => {
         try {
             const file = await openFile();
-            console.log(file);
-
             setFileSelectorState({
                 isFileSelected: true,
                 fileDetails: { name: file.name, size: Math.floor(file.size / (1024 * 1024)) },
@@ -92,6 +112,7 @@ function Upload() {
             setPersentage(completed);
         };
 
+        // @ts-ignore
         xhr.open("POST", `${url}/upload/${fileSelectorState.fileDetails.name}`);
         xhr.send(fileSelectorState.blob);
         setModalState({ isOpen: true });
@@ -106,19 +127,14 @@ function Upload() {
             <NavigationBar />
             <Container>
                 <Row className="mb-3 text-center">
-                    <Col>
-                        <Header />
-                    </Col>
-                </Row>
-                <Row className="mb-3 text-center">
-                    <Col>
+                    {/* <Col>
                         <Button color="primary" onClick={onClickSelect}>
                             Select File
                         </Button>
-                    </Col>
+                    </Col> */}
                 </Row>
 
-                {fileSelectorState.isFileSelected ? (
+                {fileSelectorState.isFileSelected && fileSelectorState.fileDetails ? (
                     <Row className="mb-3 text-center">
                         <Col>
                             <Card>
@@ -138,19 +154,22 @@ function Upload() {
                 ) : (
                     <Row className="mb-3 text-center">
                         <Col>
-                            <Card onClick={onClickSelect}>
-                                <div className={uploadStyles.addImgContainer}>
+                            <UploadBox>
+                                <SelectImg onClick={onClickSelect}>
                                     <Image src="/add-btn.svg" width={100} height={100} alt="add button" />
-                                </div>
-                            </Card>
+                                </SelectImg>
+                                <h3>Click To Upload 👆</h3>
+                            </UploadBox>
                         </Col>
                     </Row>
                 )}
-                <Modal modalClassName={musicStyles.loader} isOpen={modalState.isOpen}>
+                <Modal isOpen={modalState.isOpen}>
                     <ModalBody className="text-center">
                         <Spinner color="primary" size="lg" />
                     </ModalBody>
-                    <ModalFooter>Uploading {persentage}%</ModalFooter>
+                    <ModalFooter className="text-center">
+                        <UploadText>Uploading {persentage}%</UploadText>
+                    </ModalFooter>
                 </Modal>
             </Container>
         </Page>

@@ -1,7 +1,9 @@
-import page from "@/styles/Page.module.css";
+interface PageProps {
+    children: React.ReactNode;
+}
 
-function Page({ children }) {
-    return <div className={page.page}>{children}</div>;
+function Page({ children }: PageProps) {
+    return <div>{children}</div>;
 }
 
 export default Page;
