@@ -6,6 +6,7 @@ import Page from "@/components/Page";
 import Player from "@/components/Player";
 import { url } from "@/utils/url";
 import styled from "styled-components";
+import { useLayoutEffect } from "react";
 
 const PlayerBox = styled.div`
     padding-top: 1rem;
@@ -15,24 +16,30 @@ function SongPage() {
     const router = useRouter();
     const { id } = router.query;
 
-    const onClickPlay = () => {
-        console.log("play button is clicked");
-    };
+    useLayoutEffect(() => {
+        if (id == undefined) {
+            router.replace("/home");
+        }
+    }, []);
 
-    return (
-        <Page>
-            <NavigationBar />
-            <Container>
-                <Row>
-                    <Col>
-                        <PlayerBox>
-                            <Player url={`${url}/stream/${id}`} />
-                        </PlayerBox>
-                    </Col>
-                </Row>
-            </Container>
-        </Page>
-    );
+    if (id == undefined) {
+        return <div></div>;
+    } else {
+        return (
+            <Page>
+                <NavigationBar />
+                <Container>
+                    <Row>
+                        <Col>
+                            <PlayerBox>
+                                <Player url={`${url}/stream/${id}`} />
+                            </PlayerBox>
+                        </Col>
+                    </Row>
+                </Container>
+            </Page>
+        );
+    }
 }
 
 export default SongPage;
