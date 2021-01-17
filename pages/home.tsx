@@ -47,7 +47,7 @@ function PlayList() {
                         onClick={() => onClickListItem(audioBlobID)}
                         active={activeBtn === id}
                     >
-                        {title}
+                        {title.length > 20 ? "To long name" : title}
                     </ListGroupItem>
                 ))}
             </ListGroup>
