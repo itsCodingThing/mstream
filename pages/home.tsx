@@ -28,6 +28,16 @@ function PlayList() {
 
     const { loading, data, error } = useQuery<IAudioResponse>(LIST_OF_SONGS);
 
+    const padString = (value: string) => {
+        const len = 35;
+        if (value.length > len) {
+            const newValue = value.slice(0, len);
+            return newValue.concat("...");
+        } else {
+            return value;
+        }
+    };
+
     if (loading) {
         return <h2>Wait Loading List</h2>;
     }
@@ -47,7 +57,7 @@ function PlayList() {
                         onClick={() => onClickListItem(audioBlobID)}
                         active={activeBtn === id}
                     >
-                        {title.length > 20 ? "To long name" : title}
+                        {padString(title)}
                     </ListGroupItem>
                 ))}
             </ListGroup>
