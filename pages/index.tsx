@@ -1,9 +1,13 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 function Root() {
     const router = useRouter();
 
-    router.replace("/home");
+    useEffect(() => {
+        router.replace("/home");
+    }, []);
+
     return <div></div>;
 }
 
