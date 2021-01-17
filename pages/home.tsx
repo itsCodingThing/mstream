@@ -9,6 +9,11 @@ import Page from "@/components/Page";
 import styled from "styled-components";
 import { IAudioResponse } from "@/utils/interfaces";
 
+const CustomListGroup = styled(ListGroup)`
+    overflow-y: auto;
+    height: 75vh;
+`;
+
 function PlayList() {
     const LIST_OF_SONGS = gql`
         query {
@@ -48,7 +53,7 @@ function PlayList() {
 
     if (data && data.songsList.length) {
         return (
-            <ListGroup>
+            <CustomListGroup>
                 {data.songsList.map(({ id, title, audioBlobID }) => (
                     <ListGroupItem
                         tag="button"
@@ -60,7 +65,7 @@ function PlayList() {
                         {padString(title)}
                     </ListGroupItem>
                 ))}
-            </ListGroup>
+            </CustomListGroup>
         );
     } else {
         return <h2>No Songs Available</h2>;
