@@ -17,6 +17,10 @@ import styled from "styled-components";
 
 const InputGroupCotainer = styled.div`
     margin-left: auto;
+
+    @media (max-width: 575.98px) {
+        padding-top: 1rem;
+    }
 `;
 
 const RouterLink = styled(NavLink)`
