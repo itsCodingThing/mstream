@@ -45,7 +45,7 @@ function Player(props: IPlayerProps) {
     }, []);
 
     const onCickToggle = () => {
-        if (toggle) {
+        if (!toggle) {
             audioRef.current?.play();
         } else {
             audioRef.current?.pause();
@@ -69,7 +69,7 @@ function Player(props: IPlayerProps) {
                 </CardBody>
                 <CardFooter>
                     <ImgBtnContainer>
-                        {toggle ? (
+                        {!toggle ? (
                             <img
                                 onClick={onCickToggle}
                                 src="/play-circle.svg"

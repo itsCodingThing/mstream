@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Col, Container, Row } from "reactstrap";
 
@@ -6,7 +7,6 @@ import Page from "@/components/Page";
 import Player from "@/components/Player";
 import { url } from "@/utils/url";
 import styled from "styled-components";
-import { useLayoutEffect } from "react";
 
 const PlayerBox = styled.div`
     padding-top: 1rem;
@@ -16,7 +16,7 @@ function SongPage() {
     const router = useRouter();
     const { id } = router.query;
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (id == undefined) {
             router.replace("/home");
         }
