@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 
 function Root() {
     const router = useRouter();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         router.replace("/home");
     }, []);
 

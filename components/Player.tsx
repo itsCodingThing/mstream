@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Button, Card, CardBody, CardFooter } from "reactstrap";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Card, CardBody, CardFooter } from "reactstrap";
 import styled from "styled-components";
 import Image from "next/image";
 
@@ -21,24 +21,46 @@ const ImgBtnContainer = styled.div`
     justify-content: center;
 `;
 
+interface RotateImageProps {
+    toggle: "running" | "paused";
+}
+
+const RotateImage = styled(Image)`
+    border-radius: 100px;
+    animation-name: rotator;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: ${(props: RotateImageProps) => props.toggle};
+
+    @keyframes rotator {
+        0% {
+            transform: rotate(0);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+`;
+
 function Player(props: IPlayerProps) {
     const audioRef = useRef<HTMLMediaElement | null>(null);
     const { url } = props;
     const [toggle, setToggle] = useState(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         audioRef.current?.addEventListener(
-            "play",
+            "loadedmetadata",
             () => {
-                console.log("audio is started");
+                console.log("meta data is lodaded");
             },
             true
         );
 
         audioRef.current?.addEventListener(
-            "loadedmetadata",
+            "canplay",
             () => {
-                console.log("meta data is lodaded");
+                console.log("song can be played");
             },
             true
         );
@@ -65,7 +87,13 @@ function Player(props: IPlayerProps) {
             </HidddenAudioElement>
             <Card>
                 <CardBody>
-                    <Image src="/music-headphone.svg" alt="headphone img" height={ImageWidth} width={ImageWidth} />
+                    <RotateImage
+                        toggle={!toggle ? "paused" : "running"}
+                        src="/music-headphone.svg"
+                        alt="headphone img"
+                        height={ImageWidth}
+                        width={ImageWidth}
+                    />
                 </CardBody>
                 <CardFooter>
                     <ImgBtnContainer>
