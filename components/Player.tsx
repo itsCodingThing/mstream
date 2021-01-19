@@ -15,7 +15,7 @@ const PlayerContainer = styled.div`
 `;
 
 const PlayerProgressBar = styled(Progress)`
-    height: 0.8rem;
+    height: 0.3rem;
     border-radius: 0;
 `;
 
