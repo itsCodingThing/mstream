@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from "react";
-import { Card, CardBody, CardFooter } from "reactstrap";
+import { useEffect, useRef, useState } from "react";
+import { Card, CardBody, CardFooter, Progress } from "reactstrap";
 import styled from "styled-components";
 import Image from "next/image";
+import ReactPlayer from "react-player";
 
 interface IPlayerProps {
     url: string;
@@ -10,6 +11,24 @@ interface IPlayerProps {
 const PlayerContainer = styled.div`
     display: flex;
     justify-content: center;
+`;
+
+const PlayerProgressBar = styled(Progress)`
+    height: 0.8rem;
+    border-radius: 0;
+`;
+
+const PlayerCard = styled(Card)`
+    width: 100%;
+`;
+
+const PlayerCardBody = styled(CardBody)`
+    display: flex;
+    justify-content: center;
+`;
+
+const PlayerCardFooter = styled(CardFooter)`
+    width: 100%;
 `;
 
 const HidddenAudioElement = styled.div`
@@ -43,35 +62,48 @@ const RotateImage = styled(Image)`
     }
 `;
 
+interface ITimer {
+    played: number;
+    loaded: number;
+    remain: number;
+    totalTime: number;
+    buffered: number;
+}
+
+const initialTime: ITimer = { played: 0, loaded: 0, remain: 100, totalTime: 0, buffered: 0 };
+
 function Player(props: IPlayerProps) {
-    const audioRef = useRef<HTMLMediaElement | null>(null);
     const { url } = props;
+    const ref = useRef<ReactPlayer>(null);
+
+    // toggle means if audio in playing or not
     const [toggle, setToggle] = useState(false);
 
-    useLayoutEffect(() => {
-        audioRef.current?.addEventListener(
-            "loadedmetadata",
-            () => {
-                console.log("meta data is lodaded");
-            },
-            true
-        );
+    const [time, setTime] = useState(initialTime);
 
-        audioRef.current?.addEventListener(
-            "canplay",
-            () => {
-                console.log("song can be played");
-            },
-            true
-        );
-    }, []);
+    const onReady = () => {
+        if (ref.current) {
+            // Get total duration time of audio
+            const secs = Math.floor(ref.current.getDuration());
+            setTime({ ...time, totalTime: secs });
+        }
+    };
+
+    const onEnd = () => {
+        setToggle(false);
+        setTime(initialTime);
+    };
+
+    const onProgress = (value: { playedSeconds: number; loadedSeconds: number }) => {
+        const played = Math.floor((Math.floor(value.playedSeconds) / time.totalTime) * 100);
+        const loaded = Math.floor((Math.floor(value.loadedSeconds) / time.totalTime) * 100);
+        const buffered = loaded - played;
+        const remain = 100 - (played + buffered);
+
+        setTime({ ...time, played, loaded, remain, buffered });
+    };
 
     const onCickToggle = () => {
-        if (!toggle) {
-            audioRef.current?.play();
-        } else {
-            audioRef.current?.pause();
-        }
         setToggle(!toggle);
     };
 
@@ -81,12 +113,18 @@ function Player(props: IPlayerProps) {
     return (
         <PlayerContainer>
             <HidddenAudioElement>
-                <audio id="hiddenAudio" preload="metadata" ref={audioRef}>
-                    <source src={url} type="audio/mp3" />
-                </audio>
+                <ReactPlayer
+                    ref={ref}
+                    playing={toggle}
+                    onReady={onReady}
+                    onProgress={onProgress}
+                    onEnded={onEnd}
+                    file="forceHLS"
+                    url={url}
+                />
             </HidddenAudioElement>
-            <Card>
-                <CardBody>
+            <PlayerCard>
+                <PlayerCardBody>
                     <RotateImage
                         toggle={!toggle ? "paused" : "running"}
                         src="/music-headphone.svg"
@@ -94,8 +132,13 @@ function Player(props: IPlayerProps) {
                         height={ImageWidth}
                         width={ImageWidth}
                     />
-                </CardBody>
-                <CardFooter>
+                </PlayerCardBody>
+                <PlayerProgressBar multi>
+                    <Progress bar color="success" value={time.played} />
+                    <Progress bar color="info" value={time.buffered} />
+                    <Progress bar color="warning" value={time.remain} />
+                </PlayerProgressBar>
+                <PlayerCardFooter>
                     <ImgBtnContainer>
                         {!toggle ? (
                             <img
@@ -115,8 +158,8 @@ function Player(props: IPlayerProps) {
                             />
                         )}
                     </ImgBtnContainer>
-                </CardFooter>
-            </Card>
+                </PlayerCardFooter>
+            </PlayerCard>
         </PlayerContainer>
     );
 }
