@@ -11,6 +11,7 @@ interface IPlayerProps {
 const PlayerContainer = styled.div`
     display: flex;
     justify-content: center;
+    position: relative;
 `;
 
 const PlayerProgressBar = styled(Progress)`
@@ -38,6 +39,13 @@ const HidddenAudioElement = styled.div`
 const ImgBtnContainer = styled.div`
     display: flex;
     justify-content: center;
+`;
+
+const LoadingOverlay = styled.div`
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(235, 223, 223);
 `;
 
 interface RotateImageProps {
@@ -76,21 +84,23 @@ function Player(props: IPlayerProps) {
     const { url } = props;
     const ref = useRef<ReactPlayer>(null);
 
-    // toggle means if audio in playing or not
-    const [toggle, setToggle] = useState(false);
+    const [state, setState] = useState({ playing: false, loading: true, spinning: false });
 
     const [time, setTime] = useState(initialTime);
 
     const onReady = () => {
         if (ref.current) {
             // Get total duration time of audio
+            console.log("ready to play");
+
             const secs = Math.floor(ref.current.getDuration());
             setTime({ ...time, totalTime: secs });
+            setState({ ...state, loading: false });
         }
     };
 
     const onEnd = () => {
-        setToggle(false);
+        setState({ ...state, spinning: false });
         setTime(initialTime);
     };
 
@@ -104,7 +114,7 @@ function Player(props: IPlayerProps) {
     };
 
     const onCickToggle = () => {
-        setToggle(!toggle);
+        setState({ ...state, playing: !state.playing, spinning: !state.spinning });
     };
 
     const ImageWidth = 200;
@@ -115,7 +125,7 @@ function Player(props: IPlayerProps) {
             <HidddenAudioElement>
                 <ReactPlayer
                     ref={ref}
-                    playing={toggle}
+                    playing={state.playing}
                     onReady={onReady}
                     onProgress={onProgress}
                     onEnded={onEnd}
@@ -124,9 +134,10 @@ function Player(props: IPlayerProps) {
                 />
             </HidddenAudioElement>
             <PlayerCard>
+                {state.loading && <LoadingOverlay />}
                 <PlayerCardBody>
                     <RotateImage
-                        toggle={!toggle ? "paused" : "running"}
+                        toggle={state.spinning ? "running" : "paused"}
                         src="/music-headphone.svg"
                         alt="headphone img"
                         height={ImageWidth}
@@ -140,19 +151,19 @@ function Player(props: IPlayerProps) {
                 </PlayerProgressBar>
                 <PlayerCardFooter>
                     <ImgBtnContainer>
-                        {!toggle ? (
+                        {state.playing ? (
                             <img
                                 onClick={onCickToggle}
-                                src="/play-circle.svg"
-                                alt="play img"
+                                src="/pause-circle.svg"
+                                alt="pause img"
                                 width={ImageBtnWidth}
                                 height={ImageBtnWidth}
                             />
                         ) : (
                             <img
                                 onClick={onCickToggle}
-                                src="/pause-circle.svg"
-                                alt="pause img"
+                                src="/play-circle.svg"
+                                alt="play img"
                                 width={ImageBtnWidth}
                                 height={ImageBtnWidth}
                             />
