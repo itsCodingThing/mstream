@@ -12,7 +12,7 @@ import { IAudioResponse } from "@/utils/interfaces";
 
 const CustomListGroup = styled(ListGroup)`
     overflow-y: auto;
-    height: 75vh;
+    height: 70vh;
     border-radius: 0;
 `;
 
