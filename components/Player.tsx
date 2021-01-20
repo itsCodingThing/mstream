@@ -3,6 +3,7 @@ import { Card, CardBody, CardFooter, Progress } from "reactstrap";
 import styled from "styled-components";
 import Image from "next/image";
 import ReactPlayer from "react-player";
+import { BsPlayFill, BsPauseFill } from "react-icons/bs";
 
 interface IPlayerProps {
     url: string;
@@ -32,11 +33,21 @@ const PlayerCardFooter = styled(CardFooter)`
     width: 100%;
 `;
 
+const PlayerPlayBtn = styled(BsPlayFill)`
+    width: 4rem;
+    height: 4rem;
+`;
+
+const PlayerPauseBtn = styled(BsPauseFill)`
+    width: 4rem;
+    height: 4rem;
+`;
+
 const HidddenAudioElement = styled.div`
     display: none;
 `;
 
-const ImgBtnContainer = styled.div`
+const PlayerBtnContainer = styled.div`
     display: flex;
     justify-content: center;
 `;
@@ -90,7 +101,11 @@ const initialTime: ITimer = { played: 0, loaded: 0, remain: 100, totalTime: 0, b
 function Player(props: IPlayerProps) {
     const { url } = props;
     const ref = useRef<ReactPlayer>(null);
+
+    // All the boolean state for the playing, loading, spinning
     const [state, setState] = useState({ playing: false, loading: true, spinning: false });
+
+    // Initial Timer for Progress bar
     const [time, setTime] = useState(initialTime);
 
     const onReady = () => {
@@ -129,7 +144,6 @@ function Player(props: IPlayerProps) {
     };
 
     const ImageWidth = 200;
-    const ImageBtnWidth = 60;
 
     return (
         <PlayerContainer>
@@ -167,25 +181,13 @@ function Player(props: IPlayerProps) {
                     <Progress bar color="warning" value={time.remain} />
                 </PlayerProgressBar>
                 <PlayerCardFooter>
-                    <ImgBtnContainer>
+                    <PlayerBtnContainer>
                         {state.playing ? (
-                            <img
-                                onClick={onCickToggle}
-                                src="/pause-circle.svg"
-                                alt="pause img"
-                                width={ImageBtnWidth}
-                                height={ImageBtnWidth}
-                            />
+                            <PlayerPauseBtn onClick={onCickToggle} />
                         ) : (
-                            <img
-                                onClick={onCickToggle}
-                                src="/play-circle.svg"
-                                alt="play img"
-                                width={ImageBtnWidth}
-                                height={ImageBtnWidth}
-                            />
+                            <PlayerPlayBtn onClick={onCickToggle} />
                         )}
-                    </ImgBtnContainer>
+                    </PlayerBtnContainer>
                 </PlayerCardFooter>
             </PlayerCard>
         </PlayerContainer>

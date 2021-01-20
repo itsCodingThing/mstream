@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Image from "next/image";
+import styled from "styled-components";
+import { BsCloudUpload } from "react-icons/bs";
 import {
     Button,
     Card,
@@ -19,7 +20,6 @@ import NavigationBar from "@/components/NavigationBar";
 import Page from "@/components/Page";
 
 import { url } from "@/utils/url";
-import styled from "styled-components";
 
 interface FileDetails {
     name: string;
@@ -32,7 +32,7 @@ interface FileSelectorState {
     blob?: Blob;
 }
 
-const SelectImg = styled.div`
+const UploadIconContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
@@ -43,6 +43,17 @@ const UploadText = styled.span`
     width: 100%;
     display: flex;
     justify-content: center;
+    font-size: 1.5rem;
+`;
+
+const UploadIcon = styled(BsCloudUpload)`
+    height: 5rem;
+    width: 5rem;
+`;
+
+const UploadSpinner = styled(Spinner)`
+    height: 4rem;
+    width: 4rem;
 `;
 
 const UploadBox = styled.div`
@@ -56,7 +67,7 @@ function Upload() {
     };
 
     const [fileSelectorState, setFileSelectorState] = useState(fileSelectorInitialState);
-    const [modalState, setModalState] = useState({ isOpen: false });
+    const [modal, setModalState] = useState({ isOpen: false });
     const [persentage, setPersentage] = useState(0);
 
     async function openFile(): Promise<File> {
@@ -82,7 +93,7 @@ function Upload() {
             const file = await openFile();
             setFileSelectorState({
                 isFileSelected: true,
-                fileDetails: { name: file.name, size: Math.floor(file.size / (1024 * 1024)) },
+                fileDetails: { name: file.name, size: Number((file.size / (1024 * 1024)).toFixed(2)) },
                 blob: file,
             });
         } catch (error) {
@@ -126,17 +137,9 @@ function Upload() {
         <Page>
             <NavigationBar />
             <Container>
-                <Row className="mb-3 text-center">
-                    {/* <Col>
-                        <Button color="primary" onClick={onClickSelect}>
-                            Select File
-                        </Button>
-                    </Col> */}
-                </Row>
-
-                {fileSelectorState.isFileSelected && fileSelectorState.fileDetails ? (
-                    <Row className="mb-3 text-center">
-                        <Col>
+                <Row className="my-3 text-center">
+                    <Col>
+                        {fileSelectorState.isFileSelected && fileSelectorState.fileDetails ? (
                             <Card>
                                 <CardBody>
                                     <CardTitle>{fileSelectorState.fileDetails.name}</CardTitle>
@@ -149,23 +152,19 @@ function Upload() {
                                     </Button>
                                 </CardBody>
                             </Card>
-                        </Col>
-                    </Row>
-                ) : (
-                    <Row className="mb-3 text-center">
-                        <Col>
-                            <UploadBox>
-                                <SelectImg onClick={onClickSelect}>
-                                    <Image src="/add-btn.svg" width={100} height={100} alt="add button" />
-                                </SelectImg>
+                        ) : (
+                            <UploadBox onClick={onClickSelect}>
+                                <UploadIconContainer>
+                                    <UploadIcon />
+                                </UploadIconContainer>
                                 <h3>Click To Upload 👆</h3>
                             </UploadBox>
-                        </Col>
-                    </Row>
-                )}
-                <Modal isOpen={modalState.isOpen}>
+                        )}
+                    </Col>
+                </Row>
+                <Modal isOpen={modal.isOpen}>
                     <ModalBody className="text-center">
-                        <Spinner color="primary" size="lg" />
+                        <UploadSpinner color="primary" size="lg" />
                     </ModalBody>
                     <ModalFooter className="text-center">
                         <UploadText>Uploading {persentage}%</UploadText>
