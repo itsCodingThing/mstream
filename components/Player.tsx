@@ -48,6 +48,13 @@ const LoadingOverlay = styled.div`
     background-color: rgb(235, 223, 223);
 `;
 
+const LoadingOverlayInner = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+`;
+
 interface RotateImageProps {
     toggle: "running" | "paused";
 }
@@ -83,9 +90,7 @@ const initialTime: ITimer = { played: 0, loaded: 0, remain: 100, totalTime: 0, b
 function Player(props: IPlayerProps) {
     const { url } = props;
     const ref = useRef<ReactPlayer>(null);
-
     const [state, setState] = useState({ playing: false, loading: true, spinning: false });
-
     const [time, setTime] = useState(initialTime);
 
     const onReady = () => {
@@ -93,8 +98,12 @@ function Player(props: IPlayerProps) {
             // Get total duration time of audio
             console.log("ready to play");
 
-            const secs = Math.floor(ref.current.getDuration());
-            setTime({ ...time, totalTime: secs });
+            if (Number.isFinite(ref.current.getDuration())) {
+                const secs = Math.floor(ref.current.getDuration());
+                console.log(`Secs: ${ref.current.getDuration()}`);
+
+                setTime({ ...time, totalTime: secs });
+            }
             setState({ ...state, loading: false });
         }
     };
@@ -105,12 +114,14 @@ function Player(props: IPlayerProps) {
     };
 
     const onProgress = (value: { playedSeconds: number; loadedSeconds: number }) => {
-        const played = Math.floor((Math.floor(value.playedSeconds) / time.totalTime) * 100);
-        const loaded = Math.floor((Math.floor(value.loadedSeconds) / time.totalTime) * 100);
-        const buffered = loaded - played;
-        const remain = 100 - (played + buffered);
+        if (time.totalTime !== 0) {
+            const played = Math.floor((Math.floor(value.playedSeconds) / time.totalTime) * 100);
+            const loaded = Math.floor((Math.floor(value.loadedSeconds) / time.totalTime) * 100);
+            const buffered = loaded - played;
+            const remain = 100 - (played + buffered);
 
-        setTime({ ...time, played, loaded, remain, buffered });
+            setTime({ ...time, played, loaded, remain, buffered });
+        }
     };
 
     const onCickToggle = () => {
@@ -134,7 +145,13 @@ function Player(props: IPlayerProps) {
                 />
             </HidddenAudioElement>
             <PlayerCard>
-                {state.loading && <LoadingOverlay />}
+                {state.loading && (
+                    <LoadingOverlay>
+                        <LoadingOverlayInner>
+                            <h3 className="mb-3 text-center display-4">Please Wait...</h3>
+                        </LoadingOverlayInner>
+                    </LoadingOverlay>
+                )}
                 <PlayerCardBody>
                     <RotateImage
                         toggle={state.spinning ? "running" : "paused"}
