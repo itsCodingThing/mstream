@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import Head from "next/head";
 import type { AppProps } from "next/app";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -13,6 +14,9 @@ const client = new ApolloClient({
 function App({ Component, pageProps }: AppProps) {
     return (
         <ApolloProvider client={client}>
+            <Head>
+                <title>Mstream</title>
+            </Head>
             <Component {...pageProps} />
         </ApolloProvider>
     );

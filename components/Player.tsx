@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Card, CardBody, CardFooter, Progress } from "reactstrap";
 import styled from "styled-components";
 import Image from "next/image";
